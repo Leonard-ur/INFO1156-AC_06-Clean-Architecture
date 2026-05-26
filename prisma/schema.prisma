@@ -1,0 +1,55 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+}
+
+model Category {
+    id    String @id @default(uuid())
+    name  String
+    slug  String @unique
+    posts Post[]
+}
+
+model Post {
+    id          String    @id @default(uuid())
+    title       String
+    description String
+    imageUrl    String
+    categoryId  String?
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    category    Category? @relation(fields: [categoryId], references: [id])
+    comments    Comment[]
+    likes       Like[]
+}
+
+model ProhibitedWord {
+    id        String   @id @default(uuid())
+    word      String
+    category  String
+    createdAt DateTime @default(now())
+}
+
+model Comment {
+    id        String   @id @default(uuid())
+    postId    String
+    content   String
+    source    String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Like {
+    id           String   @id @default(uuid())
+    postId       String
+    reactionType String
+    weight       Int
+    source       String
+    createdAt    DateTime @default(now())
+    post         Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+

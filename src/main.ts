@@ -1,0 +1,43 @@
+import { join } from "node:path"
+import { AppModule } from "@/app.module"
+
+import { ValidationPipe } from "@nestjs/common"
+import { NestFactory } from "@nestjs/core"
+import { NestExpressApplication } from "@nestjs/platform-express"
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
+
+async function bootstrap() {
+    const app = await NestFactory.create<NestExpressApplication>(AppModule)
+
+    app.enableCors({
+        origin: "*",
+    })
+
+    app.useStaticAssets(join(process.cwd(), "public"))
+    app.useGlobalPipes(
+        new ValidationPipe({
+            whitelist: true,
+            forbidNonWhitelisted: true,
+            transform: true,
+        }),
+    )
+
+    const config = new DocumentBuilder()
+        .setTitle("NestJS AC_06 - Clean Architecture")
+        .setDescription(
+            "API documentation for the NestJS AC_06 - Clean Architecture project",
+        )
+        .setVersion("1.0")
+        .build()
+
+    const document = SwaggerModule.createDocument(app, config)
+
+    SwaggerModule.setup("docs", app, document)
+
+    await app.listen(3000, "0.0.0.0")
+
+    console.log("Application running on: http://localhost:3000")
+    console.log("Documentation at: http://localhost:3000/docs")
+}
+
+bootstrap()

@@ -1,13 +1,12 @@
 import { Module } from "@nestjs/common"
 import { FeedRankingStrategyFactory } from "@/posts/feed-ranking.strategy"
 import { ModerationModule } from "@/moderation/moderation.module"
-import { PostsController } from "@/posts/posts.controller"
 import { PostsService } from "@/posts/posts.service"
+import { PrismaModule } from "@/shared/prisma.module"
 
 @Module({
-    imports: [ModerationModule],
-    controllers: [PostsController],
+    imports: [ModerationModule, PrismaModule],
     providers: [PostsService, FeedRankingStrategyFactory],
-    exports: [PostsService],
+    exports: [PostsService, FeedRankingStrategyFactory],
 })
 export class PostsModule {}

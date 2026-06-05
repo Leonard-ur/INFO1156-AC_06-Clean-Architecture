@@ -1,19 +1,21 @@
 import { Module } from "@nestjs/common"
-import { CategoriesModule } from "@/categories/categories.module"
-import { CommentsModule } from "@/comments/comments.module"
-import { LikesModule } from "@/likes/likes.module"
-import { ModerationModule } from "@/moderation/moderation.module"
-import { PostsModule } from "@/posts/posts.module"
-import { PrismaModule } from "@/shared/prisma.module"
+import { InfrastructureModule } from "@/infrastructure/infrastructure.module"
+import { ApplicationModule } from "@/application/application.module"
+import { HttpModule } from "@/http/http.module"
 
+/**
+ * AppModule: Punto de entrada de la aplicación
+ * 
+ * Estructura de capas (en orden de dependencia):
+ * 1. InfrastructureModule: Acceso a datos, servicios externos
+ * 2. ApplicationModule: Lógica de negocio (use cases)
+ * 3. HttpModule: Controllers HTTP, presentación
+ */
 @Module({
     imports: [
-        PrismaModule,
-        CategoriesModule,
-        PostsModule,
-        CommentsModule,
-        LikesModule,
-        ModerationModule,
+        InfrastructureModule,
+        ApplicationModule,
+        HttpModule,
     ],
 })
 export class AppModule {}

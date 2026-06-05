@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common"
 import { LikesController } from "@/likes/likes.controller"
 import { LikesService } from "@/likes/likes.service"
-import { PostsModule } from "@/posts/posts.module"
+import { PrismaModule } from "@/shared/prisma.module"
 
 @Module({
-    imports: [PostsModule],
+    imports: [PrismaModule],
     controllers: [LikesController],
     providers: [LikesService],
 })

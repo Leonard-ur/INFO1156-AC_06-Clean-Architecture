@@ -1,13 +1,14 @@
 import { Injectable } from "@nestjs/common"
+import { GetFeedPostsInput } from "@/application/types"
 import { PrismaService } from "@/shared/prisma.service"
 
 @Injectable()
 export class GetFeedPostsUseCase {
     constructor(private readonly prisma: PrismaService) {}
 
-    async execute(categoryId?: string) {
+    async execute(input: GetFeedPostsInput) {
         const posts = await this.prisma.post.findMany({
-            where: categoryId ? { categoryId } : undefined,
+            where: input.categoryId ? { categoryId: input.categoryId } : undefined,
             include: { comments: true, likes: true, category: true },
         })
 

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common"
-import { CreateCommentDto } from "@/posts/posts.dtos"
+import { CreateCommentDto } from "@/http/dtos"
 import { CreateCommentUseCase, ListCommentsUseCase } from "@/application/use-cases/comments"
 
 @Controller("api/posts/:id/comments")
@@ -16,6 +16,9 @@ export class CommentsController {
 
     @Post()
     async create(@Param("id") postId: string, @Body() body: CreateCommentDto) {
-        return await this.createCommentUseCase.execute(postId, body)
+        // Transformar DTO → tipo de aplicación
+        return await this.createCommentUseCase.execute(postId, {
+            content: body.content,
+        })
     }
 }

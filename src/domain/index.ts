@@ -11,5 +11,5 @@ export * from './value-objects/post-score.vo';
 // Repositorios (interfaces + tokens)
 export * from './repositories/index';
 
-// Servicios de dominio / Estrategias
-export * from './services/feed-ranking.strategy';
+// NOTA: feed-ranking.strategy no se exporta aquí porque la estrategia
+// utilizada en la aplicación está en src/posts/feed-ranking.strategy.ts

@@ -1,18 +1,11 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common"
-import { CreateCommentDto } from "@/posts/posts.dtos"
-import { CommentsService } from "@/comments/comments.service"
+/**
+ * DEPRECATED - Este archivo está muerto y no se usa
+ * 
+ * Los controllers de comments ahora están en:
+ * @see src/http/controllers/comments.controller.ts
+ * 
+ * Se mantiene aquí solo como referencia histórica.
+ */
 
-@Controller("api/posts/:id/comments")
-export class CommentsController {
-    constructor(private readonly commentsService: CommentsService) {}
-
-    @Get()
-    list(@Param("id") postId: string) {
-        return this.commentsService.listByPostId(postId)
-    }
-
-    @Post()
-    create(@Param("id") postId: string, @Body() body: CreateCommentDto) {
-        return this.commentsService.create(postId, body)
-    }
-}
+// Este archivo fue reemplazado por la arquitectura limpia
+// No importar de aquí - USAR src/http/controllers/comments.controller.ts

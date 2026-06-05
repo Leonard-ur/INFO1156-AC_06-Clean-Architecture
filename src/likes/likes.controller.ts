@@ -1,6 +1,6 @@
 import { Body, Controller, Param, Post } from "@nestjs/common"
 import { LikesService } from "@/likes/likes.service"
-import { AddLikeDto } from "@/posts/posts.dtos"
+import { AddLikeDto } from "@/http/dtos"
 
 @Controller("api/posts/:id/likes")
 export class LikesController {

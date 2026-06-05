@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common"
-import { CreateCommentDto } from "@/posts/posts.dtos"
+import { CreateCommentInput } from "@/application/types"
 import { ModerationService } from "@/moderation/moderation.service"
 import { PrismaService } from "@/shared/prisma.service"
 
@@ -10,7 +10,7 @@ export class CreateCommentUseCase {
         private readonly moderationService: ModerationService,
     ) {}
 
-    async execute(postId: string, data: CreateCommentDto) {
+    async execute(postId: string, data: CreateCommentInput) {
         await this.assertPostExists(postId)
 
         const moderation = await this.moderationService.moderate(data.content)

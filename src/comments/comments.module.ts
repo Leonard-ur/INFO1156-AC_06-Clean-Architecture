@@ -1,12 +1,14 @@
 import { Module } from "@nestjs/common"
-import { CommentsService } from "@/comments/comments.service"
-import { ModerationModule } from "@/moderation/moderation.module"
-import { PostsModule } from "@/posts/posts.module"
-import { PrismaModule } from "@/shared/prisma.module"
 
-@Module({
-    imports: [PostsModule, ModerationModule, PrismaModule],
-    providers: [CommentsService],
-    exports: [CommentsService],
-})
+/**
+ * CommentsModule: Módulo vacío mantenido para compatibilidad
+ * 
+ * NOTA:
+ * - CommentsService está deprecated (usar use cases en application layer)
+ * - CommentsController está deprecated (usar HttpModule)
+ * - Lógica de negocio está en src/application/use-cases/comments/
+ * - CreateCommentUseCase
+ * - ListCommentsUseCase
+ */
+@Module({})
 export class CommentsModule {}

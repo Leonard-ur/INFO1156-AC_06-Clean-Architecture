@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from "@nestjs/common"
-import { CreatePostDto } from "@/posts/posts.dtos"
+import { CreatePostInput } from "@/application/types"
 import { ModerationService } from "@/moderation/moderation.service"
 import { PrismaService } from "@/shared/prisma.service"
 
@@ -10,7 +10,7 @@ export class CreatePostUseCase {
         private readonly moderationService: ModerationService,
     ) {}
 
-    async execute(data: CreatePostDto) {
+    async execute(data: CreatePostInput) {
         const text = `${data.title} ${data.description}`
         const moderation = await this.moderationService.moderate(text)
 

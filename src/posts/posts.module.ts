@@ -1,12 +1,16 @@
 import { Module } from "@nestjs/common"
 import { FeedRankingStrategyFactory } from "@/posts/feed-ranking.strategy"
-import { ModerationModule } from "@/moderation/moderation.module"
-import { PostsService } from "@/posts/posts.service"
-import { PrismaModule } from "@/shared/prisma.module"
 
+/**
+ * PostsModule: Proporciona solo la estrategia de feed ranking
+ * 
+ * NOTA: 
+ * - PostsService está deprecated (usar use cases en application layer)
+ * - PostsController está deprecated (usar HttpModule)
+ * - Lógica de negocio está en src/application/use-cases/posts/
+ */
 @Module({
-    imports: [ModerationModule, PrismaModule],
-    providers: [PostsService, FeedRankingStrategyFactory],
-    exports: [PostsService, FeedRankingStrategyFactory],
+    providers: [FeedRankingStrategyFactory],
+    exports: [FeedRankingStrategyFactory],
 })
 export class PostsModule {}

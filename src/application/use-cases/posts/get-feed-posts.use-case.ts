@@ -11,6 +11,7 @@ import {
 import {
     FeedRankingStrategyFactory,
     FeedOrderMode,
+    PostWithMetrics,
 } from "@/domain/services/feed-ranking.strategy"
 
 export interface FeedPostOutput {
@@ -27,19 +28,11 @@ export interface FeedPostOutput {
     relevanceScore: number
 }
 
-/**
- * GetFeedPostsUseCase
- *
- * Obtiene el feed de posts enriquecido con métricas y ordenado por estrategia.
- *
- * CAMBIO vs versión original:
- *   Antes: una sola query Prisma con includes (comments, likes, category).
- *   Ahora: tres repositorios independientes + estrategia de ranking del dominio.
- *
- * Beneficio: la lógica de ranking (PostScore, FeedRankingStrategy) ya estaba
- * en el dominio pero no se usaba. Ahora sí se aplica correctamente desde
- * el use case, sin que ninguna capa de infraestructura sepa de este cálculo.
- */
+// Extendemos PostWithMetrics para incluir la categoría sin romper el contrato del dominio
+interface EnrichedPost extends PostWithMetrics {
+    categoryName: string | null
+}
+
 @Injectable()
 export class GetFeedPostsUseCase {
     constructor(
@@ -60,29 +53,25 @@ export class GetFeedPostsUseCase {
             input.categoryId ? { categoryId: input.categoryId } : undefined,
         )
 
-        const enriched = await Promise.all(
+        const enriched: EnrichedPost[] = await Promise.all(
             posts.map(async (post) => {
-                const [likes, comments] = await Promise.all([
-                    this.likeRepository.findByPostId(post.id),
+                const [likesCount, comments] = await Promise.all([
+                    this.likeRepository.countByPostId(post.id),
                     this.commentRepository.findByPostId(post.id),
                 ])
-
-                const likesCount = likes.reduce((sum, l) => sum + 1, 0)
-                const commentsCount = comments.length
 
                 return {
                     id: post.id,
                     title: post.title,
-                    description: post.content,
+                    content: post.content,
                     imageUrl: post.imageUrl,
                     categoryId: post.categoryId,
-                    category: post.category?.name ?? null,
+                    categoryName: post.category?.name ?? null,
                     createdAt: post.createdAt,
                     updatedAt: post.updatedAt,
                     likesCount,
-                    commentsCount,
+                    commentsCount: comments.length,
                     score: 0,
-                    relevanceScore: 0,
                 }
             }),
         )
@@ -90,15 +79,15 @@ export class GetFeedPostsUseCase {
         const strategy = FeedRankingStrategyFactory.create(
             input.orderBy ?? "recent",
         )
-        const ranked = strategy.rank(enriched)
+        const ranked = strategy.rank<EnrichedPost>(enriched)
 
         return ranked.map((p) => ({
             id: p.id,
             title: p.title,
-            description: p.description,
+            description: p.content, // CORRECCIÓN: El dominio usa 'content', la salida HTTP usa 'description'
             imageUrl: p.imageUrl,
             categoryId: p.categoryId,
-            category: p.category,
+            category: p.categoryName,
             createdAt: p.createdAt,
             updatedAt: p.updatedAt,
             likesCount: p.likesCount,

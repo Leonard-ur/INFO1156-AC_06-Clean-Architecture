@@ -1,13 +1,25 @@
-import { Injectable } from "@nestjs/common"
-import { PrismaService } from "@/shared/prisma.service"
+import { Inject, Injectable } from "@nestjs/common"
+import { POST_REPOSITORY, IPostRepository } from "@/domain/repositories"
 
+/**
+ * GetAllPostsUseCase
+ *
+ * Retorna todos los posts ordenados por fecha de creación descendente.
+ *
+ * CAMBIO vs versión original:
+ *   Antes: this.prisma.post.findMany({ orderBy: { createdAt: 'desc' } })
+ *   Ahora: this.postRepository.findAll()
+ *   El ordenamiento por defecto es responsabilidad de la implementación
+ *   del repositorio (PrismaPostRepository), no del use case.
+ */
 @Injectable()
 export class GetAllPostsUseCase {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        @Inject(POST_REPOSITORY)
+        private readonly postRepository: IPostRepository,
+    ) {}
 
-    async execute() {
-        return await this.prisma.post.findMany({
-            orderBy: { createdAt: "desc" },
-        })
+    async execute(): Promise<unknown> {
+        return this.postRepository.findAll()
     }
 }
